@@ -1,0 +1,332 @@
+
+/* ==============================
+   FAQ PAGE
+================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+}
+
+
+/* ==============================
+   ACTIVE NAV LINK
+================================= */
+
+.active-link {
+  color: #2563eb !important;
+}
+
+
+/* ==============================
+   FAQ HERO
+================================= */
+
+.faq-hero {
+  min-height: 250px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 80px 40px;
+
+  background: linear-gradient(
+    135deg,
+    #eff6ff 0%,
+    #ffffff 55%,
+    #dbeafe 100%
+  );
+
+  text-align: center;
+}
+
+.faq-hero-content {
+  width: 100%;
+  max-width: 850px;
+}
+
+.faq-hero h1 {
+  color: #111827;
+
+  font-size: clamp(40px, 6vw, 65px);
+  line-height: 1.1;
+
+  margin: 15px 0 25px;
+}
+
+.faq-hero h1 span {
+  display: block;
+  color: #2563eb;
+}
+
+.faq-hero-content > p:last-child {
+  max-width: 650px;
+
+  margin: 0 auto;
+
+  color: #475569;
+
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+
+/* ==============================
+   FAQ SECTION
+================================= */
+
+.faq-section {
+  padding: 40px 40px;
+
+  background: #ffffff;
+}
+
+.faq-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+
+
+
+
+/* ==============================
+   FAQ LIST
+================================= */
+
+.faq-list { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 20px; }
+
+
+/* ==============================
+   FAQ ITEM
+================================= */
+
+.faq-item {
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+  border-color: #bfdbfe;
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+
+/* ==============================
+   QUESTION
+================================= */
+
+.faq-question {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 22px 25px;
+
+  border: none;
+
+  background: #ffffff;
+
+  color: #111827;
+
+  text-align: left;
+
+  font-family: "Montserrat", sans-serif;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+/* ==============================
+   PLUS ICON
+================================= */
+
+.faq-icon {
+  flex-shrink: 0;
+
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  font-size: 20px;
+  font-weight: 500;
+
+  transition: transform 0.3s ease;
+}
+
+
+/* ==============================
+   ANSWER
+================================= */
+
+.faq-answer {
+  max-height: 0;
+
+  overflow: hidden;
+
+  transition: max-height 0.35s ease;
+}
+
+.faq-answer p {
+  padding: 0 25px 22px;
+
+  color: #64748b;
+
+  font-size: 13px;
+
+  line-height: 1.8;
+
+  margin: 0;
+}
+
+
+/* ==============================
+   OPEN FAQ
+================================= */
+
+.faq-item.active {
+  border-color: #bfdbfe;
+}
+
+.faq-item.active .faq-icon {
+  transform: rotate(45deg);
+
+  background: #2563eb;
+
+  color: #ffffff;
+}
+
+
+/* ==============================
+   CTA
+================================= */
+
+.faq-cta {
+  padding: 90px 40px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  text-align: center;
+}
+
+.faq-cta-content {
+  max-width: 700px;
+
+  margin: 0 auto;
+}
+
+.faq-cta .section-label {
+  color: #dbeafe;
+}
+
+.faq-cta h2 {
+  font-size: clamp(32px, 5vw, 50px);
+
+  line-height: 1.2;
+
+  margin: 10px 0 20px;
+}
+
+.faq-cta h2 span {
+  display: block;
+  color: #ffffff;
+}
+
+.faq-cta-content > p:not(.section-label) {
+  font-size: 14px;
+
+  line-height: 1.8;
+
+  opacity: 0.9;
+}
+
+
+/* ==============================
+   CTA BUTTONS
+================================= */
+
+.faq-cta-buttons {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 15px;
+
+  margin-top: 30px;
+}
+
+.faq-primary-btn,
+.faq-secondary-btn {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  padding: 14px 25px;
+
+  border-radius: 8px;
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: all 0.3s ease;
+}
+
+.faq-primary-btn {
+  background: #ffffff;
+
+  color: #2563eb;
+}
+
+.faq-primary-btn:hover {
+  transform: translateY(-2px);
+}
+
+.faq-secondary-btn {
+  color: #ffffff;
+
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.faq-secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+
+
+
+

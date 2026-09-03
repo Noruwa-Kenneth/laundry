@@ -1,0 +1,286 @@
+
+/* ==============================
+   CONTACT SECTION
+================================= */
+
+.contact-section {
+  padding: 40px 40px;
+  background: #ffffff;
+
+  scroll-margin-top: 80px;
+}
+
+.contact-container {
+  max-width: 1150px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+
+  gap: 70px;
+
+  align-items: center;
+}
+
+
+/* ==============================
+   CONTACT CONTENT
+================================= */
+
+.contact-content h2 {
+  color: #111827;
+
+  font-size: clamp(32px, 4vw, 48px);
+
+  line-height: 1.2;
+
+  margin: 10px 0 20px;
+}
+
+.contact-content h2 span {
+  display: block;
+
+  color: #2563eb;
+}
+
+.contact-description {
+  max-width: 600px;
+
+  color: #64748b;
+
+  font-size: 14px;
+
+  line-height: 1.8;
+
+  margin-bottom: 35px;
+}
+
+
+/* ==============================
+   CONTACT INFO
+================================= */
+
+.contact-info-list {
+  display: grid;
+
+  grid-template-columns: 1fr ;
+
+  gap: 25px;
+}
+
+.contact-info-item {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 15px;
+}
+
+
+
+.contact-info-icon {
+  width: 45px;
+  height: 45px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #eff6ff;
+
+  border-radius: 10px;
+
+  color: #2563eb;
+}
+
+.contact-info-icon i {
+  font-size: 20px;
+}
+
+.contact-info-text h3 {
+  color: #111827;
+
+  font-size: 14px;
+
+  margin-bottom: 6px;
+}
+
+.contact-info-text p,
+.contact-info-text a {
+  color: #64748b;
+
+  font-size: 12px;
+
+  line-height: 1.6;
+
+  text-decoration: none;
+}
+
+.contact-info-text a:hover {
+  color: #2563eb;
+}
+
+
+/* ==============================
+   CONTACT CARD
+================================= */
+
+.contact-card {
+  min-height: 380px;
+
+  position: relative;
+
+  display: flex;
+
+  align-items: center;
+
+  padding: 45px 35px;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      rgba(37, 100, 235, 0.726),
+      rgba(1, 2, 5, 0.384)
+    ),
+    url("../asset/laud.jpg");
+
+  background-size: cover;
+
+  background-position: center;
+
+  color: #ffffff;
+
+  box-shadow: 0 20px 40px rgba(37, 99, 235, 0.18);
+}
+
+.contact-card-content {
+  position: relative;
+
+  z-index: 2;
+}
+
+.contact-card-icon {
+  width: 55px;
+  height: 55px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #ffffff;
+
+  color: #2563eb;
+
+  border-radius: 12px;
+
+  font-weight: 700;
+
+  margin-bottom: 25px;
+}
+
+.contact-card h3 {
+  color: #ffffff;
+
+  font-size: 28px;
+
+  line-height: 1.3;
+
+  margin-bottom: 15px;
+}
+
+.contact-card p {
+  max-width: 400px;
+
+  color: #ffffff;
+
+  font-size: 13px;
+
+  line-height: 1.7;
+
+  opacity: 0.95;
+}
+
+.contact-card-btn {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin-top: 25px;
+
+  padding: 13px 20px;
+
+  background: #ffffff;
+
+  color: #2563eb;
+
+  border-radius: 8px;
+
+  text-decoration: none;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  transition: all 0.3s ease;
+}
+
+.contact-card-btn:hover {
+  transform: translateY(-2px);
+
+  gap: 14px;
+}
+
+
+/* ==============================
+   TABLET
+================================= */
+
+@media screen and (max-width: 900px) {
+
+  .contact-container {
+    grid-template-columns: 1fr;
+
+    gap: 50px;
+  }
+
+  .contact-card {
+    max-width: 600px;
+
+    width: 100%;
+  }
+
+}
+
+
+/* ==============================
+   MOBILE
+================================= */
+
+@media screen and (max-width: 600px) {
+
+  .contact-section {
+    padding: 70px 20px;
+  }
+
+  .contact-info-list {
+    grid-template-columns: 1fr;
+
+    gap: 20px;
+  }
+
+  .contact-card {
+    min-height: 340px;
+
+    padding: 35px 25px;
+  }
+
+}
+

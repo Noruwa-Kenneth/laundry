@@ -1,0 +1,16 @@
+/* Remove default browser spacing */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Page */
+body {
+    font-family: 'Montserrat', sans-serif;
+  background-color: #ffffff;
+}
+
+html {
+  scroll-behavior: smooth;
+}
