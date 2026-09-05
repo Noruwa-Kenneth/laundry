@@ -44,8 +44,9 @@
         <a href="Business.html">B2B</a>
         <a href="FAQ.html">FAQ</a>
          <a href="faq.html#contact">Contact</a>
+         <a href="admin.html">Admin</a>
         <!-- Call to Action -->
-        <a href="#" class="pickup-btn">Book a Pickup</a>
+        <a href="booking.html" class="pickup-btn">Book a Pickup</a>
       </div>
 
       <!-- Hamburger Icon -->
@@ -78,9 +79,9 @@
       <section class="services-section" id="services">
         <h1 class="title">select your Services</h1>
         <p class="services-description">click on the service to view plan</p>
-        <div class="services-container">
-          <div class="service-card">
-            <div class="service-icon service-wash">
+        <div class="services-containers">
+          <div class="service-cards">
+            <div class="service-icons service-washs">
               <img src="asset/service-wash.png" alt="Service Wash" />
             </div>
 
@@ -88,13 +89,13 @@
             <h4>We wash for you</h4>
             <p>Professional washing, drying and folding service</p>
 
-            <a href="#" class="price-btn green" data-service="service-wash">
+            <a href="#" class="price-btns green" data-service="service-wash">
               View Prices <span>›</span>
             </a>
           </div>
 
-          <div class="service-card">
-            <div class="service-icon ironing">
+          <div class="service-cards">
+            <div class="service-icons ironings">
               <img src="asset/ironing.png" alt="Ironing" />
             </div>
 
@@ -102,13 +103,13 @@
             <h4>We press for you</h4>
             <p>Professional ironing and pressing services</p>
 
-            <a href="#" class="price-btn orange" data-service="ironing">
+            <a href="#" class="price-btns orange" data-service="ironing">
               View Prices <span>›</span>
             </a>
           </div>
 
-          <div class="service-card">
-            <div class="service-icon dry-cleaning">
+          <div class="service-cards">
+            <div class="service-icons dry-cleanings">
               <img src="asset/dry-cleaning.png" alt="Dry Cleaning" />
             </div>
 
@@ -116,13 +117,13 @@
             <h4>Special care</h4>
             <p>Professional cleaning for delicate garments</p>
 
-            <a href="#" class="price-btn purple" data-service="dry-cleaning">
+            <a href="#" class="price-btns purple" data-service="dry-cleaning">
               View Prices <span>›</span>
             </a>
           </div>
 
-          <div class="service-card">
-            <div class="service-icon houseware">
+          <div class="service-cards">
+            <div class="service-icons housewares">
               <img src="asset/houseware.png" alt="Houseware" />
             </div>
 
@@ -130,13 +131,13 @@
             <h4>Home textiles</h4>
             <p>Curtains, cushions, and household textiles</p>
 
-            <a href="#" class="price-btn teal" data-service="houseware">
+            <a href="#" class="price-btns teal" data-service="houseware">
               View Prices <span>›</span>
             </a>
           </div>
 
-          <div class="service-card">
-            <div class="service-icon bedlinen">
+          <div class="service-cards">
+            <div class="service-icons bedlinens">
               <img src="asset/bedlinen.png" alt="Bedlinen" />
             </div>
 
@@ -144,7 +145,7 @@
             <h4>Bedding care</h4>
             <p>Duvets, pillows, and bed linens</p>
 
-            <a href="#" class="price-btn cyan" data-service="bedlinen">
+            <a href="#" class="price-btns cyan" data-service="bedlinen">
               View Prices <span>›</span>
             </a>
           </div>
@@ -158,6 +159,7 @@
 
         <!-- packages section -->
       </section>
+
       <section class="packages-section">
         <div class="packages-header">
           <h2>Special New bee Deals</h2>
@@ -269,7 +271,7 @@
 
           <!-- SERVICE FILTERS -->
 
-          <div class="service-filters" id="services">
+          <div class="service-filters"  id="serviceFilters">
             <button class="filter-btn active" data-category="all">
               All Services
             </button>
@@ -316,6 +318,7 @@
                 <h2 id="selectedServiceTitle">
                   Select a service to view prices
                 </h2>
+                <p id="selectedServiceDescription"></p>
               </div>
 
               <div class="selected-prices-grid" id="selectedPricesGrid"></div>
@@ -332,12 +335,12 @@
     </p>
 
     <div class="cta-buttons">
-      <a href="#" class="btn btn-primary">
+      <a href="booking.html" class="btn btn-primary">
         <i class="fa-solid fa-location-dot"></i>
         <span>Book a Pickup</span>
       </a>
 
-      <a href="#" class="btn btn-secondary">
+      <a href="FAQ.html#contact" class="btn btn-secondary">
         <i class="fa-solid fa-phone"></i>
         <span>Contact Us</span>
       </a>

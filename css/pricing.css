@@ -1,6 +1,7 @@
+/* service section start */
 .services-section {
   padding: 40px 40px;
-  background: #ffffff;
+  background: #ebebeb;
 
   scroll-margin-top: 80px;
 }
@@ -16,7 +17,237 @@
     font-size: 1rem;
     margin-bottom: 2rem;
     color: #555;
+  
 }
+
+.services-containers {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+
+.service-cards {
+  padding: 25px 20px;
+  border-radius: 16px;
+  text-align: center;
+  color: #ffffff;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-cards:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =================================
+   SERVICE CARD COLORS
+================================= */
+
+.service-cards:nth-child(1) {
+  background: #10b981;
+}
+
+.service-cards:nth-child(2) {
+  background: #f59e0b;
+}
+
+.service-cards:nth-child(3) {
+  background: #8b5cf6;
+}
+
+.service-cards:nth-child(4) {
+  background: #14b8a6;
+}
+
+.service-cards:nth-child(5) {
+  background: #06b6d4;
+}
+
+
+/* =================================
+   SERVICE ICON
+================================= */
+
+.service-icons {
+  width: 70px;
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 15px;
+
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
+
+.service-icons img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+
+/* =================================
+   SERVICE TEXT
+================================= */
+
+.service-cards h3 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.service-cards h4 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.service-cards p {
+  margin: 0 0 20px;
+
+  font-size: 13px;
+  line-height: 1.5;
+
+  color: rgba(255, 255, 255, 0.9);
+}
+
+
+/* =================================
+   VIEW PRICES BUTTON
+================================= */
+
+.price-btns {
+  margin-top: auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  width: 100%;
+
+  padding: 11px 16px;
+
+  background: #ffffff;
+
+  border-radius: 8px;
+
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.price-btns:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =================================
+   BUTTON TEXT COLORS
+================================= */
+
+.price-btns.green {
+  color: #10b981;
+}
+
+.price-btns.orange {
+  color: #f59e0b;
+}
+
+.price-btns.purple {
+  color: #8b5cf6;
+}
+
+.price-btns.teal {
+  color: #14b8a6;
+}
+
+.price-btns.cyan {
+  color: #06b6d4;
+}
+
+.price-btns span {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* Icon background colors */
+
+
+.service-washs {
+  background: #ffffff;
+}
+
+.ironings {
+  background: #ffffff;
+}
+
+.dry-cleanings {
+  background: #ffffff;
+}
+
+.housewares {
+  background: #ffffff;
+}
+
+.bedlinens {
+  background: #ffffff;
+}
+
+/* =================================
+   VIEW ALL PRICES
+================================= */
+
+.viewall-btn.purple {
+  background: #fffefe;
+  color: #070505;
+}
+
+.viewall-btn.purple:hover {
+  background: #ebeff0;
+}
+
+
+/* =================================
+   RESPONSIVE
+================================= */
+
+@media (max-width: 1100px) {
+  .services-containers {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .services-containers {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .services-containers {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* service section ends */
+
 .pricing-hero {
 background: #eff6ff;
 min-height: 340px;
@@ -70,7 +301,7 @@ line-height: 1.7;
 
 .packages-section {
   padding: 20px 20px;
-  max-width: 1100px;
+  max-width: 1400px;
   width: 100%;
   margin: 0 auto;
 }

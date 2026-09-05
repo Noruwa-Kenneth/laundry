@@ -396,84 +396,112 @@ const servicePrices = {
   },
 };
 
-const priceButtons = document.querySelectorAll(".price-btn");
+const priceButtons = document.querySelectorAll(".price-btns");
 
 const selectedPrices = document.getElementById("selectedPrices");
 
-const selectedServiceTitle = document.getElementById("selectedServiceTitle");
+const selectedServiceTitle =
+  document.getElementById("selectedServiceTitle");
 
-const selectedServiceDescription = document.getElementById(
-  "selectedServiceDescription",
-);
+const selectedServiceDescription =
+  document.getElementById("selectedServiceDescription");
 
-const selectedPricesGrid = document.getElementById("selectedPricesGrid");
+const selectedPricesGrid =
+  document.getElementById("selectedPricesGrid");
+
+
+// ========================================
+// SHOW ONE SERVICE
+// ========================================
+
+function showServicePrices(serviceKey) {
+  const selectedService = servicePrices[serviceKey];
+
+  // Stop if the service does not exist
+  if (!selectedService) {
+    return;
+  }
+
+  // Change heading
+  selectedServiceTitle.textContent =
+    selectedService.title;
+
+  // Change description
+  selectedServiceDescription.textContent =
+    selectedService.description;
+
+  // Remove previous results
+  selectedPricesGrid.innerHTML = "";
+
+  // Create the price cards
+  selectedService.prices.forEach(function (item) {
+    const priceCard =
+      document.createElement("div");
+
+    priceCard.className =
+      "selected-price-card";
+
+    priceCard.innerHTML = `
+      <div class="selected-price-info">
+
+        <h3>
+          ${item.name}
+        </h3>
+
+        <span>
+          ${item.unit}
+        </span>
+
+      </div>
+
+      <div class="selected-price">
+        ${item.price}
+      </div>
+    `;
+
+    selectedPricesGrid.appendChild(
+      priceCard
+    );
+  });
+
+  // Show pricing section
+  selectedPrices.classList.add("show");
+
+  // Scroll to results
+  selectedPrices.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+}
+
+
+// ========================================
+// SERVICE CARD VIEW PRICE BUTTONS
+// ========================================
 
 priceButtons.forEach(function (button) {
-  button.addEventListener("click", function (event) {
-    event.preventDefault();
 
-    const service = button.dataset.service;
+  button.addEventListener(
+    "click",
+    function (event) {
 
-    const selectedService = servicePrices[service];
+      // Prevent href="#" from jumping
+      event.preventDefault();
 
-    if (!selectedService) {
-      return;
+      // Example:
+      // service-wash
+      // ironing
+      // dry-cleaning
+      const serviceKey =
+        button.dataset.service;
+
+      showServicePrices(serviceKey);
     }
+  );
 
-    /* Change heading */
-
-    selectedServiceTitle.textContent = selectedService.title;
-
-    /* Change description */
-
-    selectedServiceDescription.textContent = selectedService.description;
-
-    /* Remove old prices */
-
-    selectedPricesGrid.innerHTML = "";
-
-    /* Create price cards */
-
-    selectedService.prices.forEach(function (item) {
-      const priceCard = document.createElement("div");
-
-      priceCard.className = "selected-price-card";
-
-      priceCard.innerHTML = `
-
-    <div class="selected-price-info">
-
-      <h3>
-        ${item.name}
-      </h3>
-
-      <span>
-        ${item.unit}
-      </span>
-
-    </div>
-
-    <div class="selected-price">
-      ${item.price}
-    </div>
-
-  `;
-
-      selectedPricesGrid.appendChild(priceCard);
-    });
-
-    /* Show the pricing section */
-
-    selectedPrices.classList.add("show");
-
-    /* Smoothly move user to prices */
-
-    selectedPrices.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  });
 });
+
+
 
 // ========================================
 // VIEW ALL PRICES

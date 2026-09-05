@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Admin Login - KES Laundry</title>
+
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+
+  <body>
+    <div class="admin-login-container">
+      <div class="admin-login-header">
+        <h1>KES Laundry</h1>
+
+        <p>Sign in to manage your laundry service.</p>
+      </div>
+
+      <div class="admin-login-card">
+        <form id="admin-login-form">
+          <div class="form-group">
+            <label for="admin-email">Email</label>
+
+            <input
+              type="email"
+              id="admin-email"
+              placeholder="Enter admin email"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="admin-password">Password</label>
+
+            <input
+              type="password"
+              id="admin-password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+
+          <button type="submit" class="admin-login-btn">Sign In</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/admin-login.js"></script>
+  </body>
+</html>

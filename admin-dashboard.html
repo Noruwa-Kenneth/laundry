@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HomeCraft Admin Console</title>
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/admin-dashboard.css" />
+  </head>
+  <body>
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="brand-icon"><i class="fa-solid fa-wrench"></i></div>
+          <div class="brand-text">
+            <h1>HomeCraft</h1>
+            <span>ADMIN CONSOLE</span>
+          </div>
+        </div>
+
+        <ul class="nav-list">
+          <li class="nav-item active" onclick="switchTab('overview')">
+            <i class="fa-solid fa-border-all"></i>
+            Overview
+          </li>
+          <li class="nav-item" onclick="switchTab('appointments')">
+            <i class="fa-regular fa-calendar-check"></i>
+            Appointments
+          </li>
+          <li class="nav-item" onclick="switchTab('services')">
+            <i class="fa-solid fa-sliders"></i>
+            Services
+          </li>
+          <li class="nav-item" onclick="switchTab('business-hours')">
+            <i class="fa-regular fa-clock"></i>
+            Business Hours
+          </li>
+          <li class="nav-item" onclick="switchTab('blocked-dates')">
+            <i class="fa-regular fa-calendar-xmark"></i>
+            Blocked Dates
+          </li>
+          <li class="nav-item" onclick="switchTab('settings')">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <a href="#" class="footer-link"
+          ><i class="fa-solid fa-house"></i> Public website</a
+        >
+        <a href="#" class="footer-link" id="logout-btn"
+          ><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out</a
+        >
+        <div class="user-info">
+          <label>Signed in as</label>
+          <span>admin@homerepair.com</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER CONTAINER -->
+    <div class="main-wrapper">
+      <header class="header">
+        <div class="breadcrumb">
+          Dashboard / <span id="breadcrumb-current">Overview</span>
+        </div>
+        <div class="header-right">Thursday, June 18</div>
+      </header>
+
+      <main class="content">
+        <!-- ==================== VIEW 1: OVERVIEW ==================== -->
+        <section id="overview-view">
+          <div class="view-title-bar">
+            <div class="title-area">
+              <div class="title-icon">
+                <i class="fa-solid fa-border-all"></i>
+              </div>
+              <div class="title-text">
+                <h2>Overview</h2>
+                <p>
+                  A quick read on bookings, pending requests, and the health of
+                  your repair calendar.
+                </p>
+              </div>
+            </div>
+            <button class="btn-dark" onclick="switchTab('appointments')">
+              View appointments <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+
+          <!-- Metric Cards -->
+          <div class="metrics-grid">
+            <div class="metric-card upcoming">
+              <div class="metric-header">
+                <label>Upcoming</label>
+                <i class="fa-regular fa-calendar-days"></i>
+              </div>
+              <div class="metric-value" id="upcoming-count">0</div>
+              <div class="metric-sub">Confirmed & pending</div>
+            </div>
+
+            <div class="metric-card pending">
+              <div class="metric-header">
+                <label>Pending</label>
+                <i class="fa-regular fa-clock"></i>
+              </div>
+              <div class="metric-value" id="pending-count">0</div>
+              <div class="metric-sub">Awaiting confirmation</div>
+            </div>
+
+            <div class="metric-card completed">
+              <div class="metric-header">
+                <label>Completed</label>
+                <i class="fa-regular fa-circle-check"></i>
+              </div>
+              <div class="metric-value" id="completed-count">0</div>
+              <div class="metric-sub">All-time completed visits</div>
+            </div>
+
+            <div class="metric-card active">
+              <div class="metric-header">
+                <label>Active Services</label>
+                <i class="fa-solid fa-wrench"></i>
+              </div>
+              <div class="metric-value">6</div>
+              <div class="metric-sub">Visible on public site</div>
+            </div>
+          </div>
+
+          <!-- Bottom Grid Panels -->
+          <div class="overview-bottom-grid">
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <h3>Upcoming appointments</h3>
+                  <p>Confirmed and pending visits, soonest first.</p>
+                </div>
+                <a class="link-btn" onclick="switchTab('appointments')"
+                  >See all &rarr;</a
+                >
+              </div>
+
+              <div
+                class="appointment-item-card"
+                id="upcoming-appointments-list"
+              ></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <h3>Recent activity</h3>
+                  <p>Latest booking events.</p>
+                </div>
+              </div>
+
+              <div class="activity-item" id="recent-activity-list">
+                <div class="item-left">
+                  <i
+                    class="fa-regular fa-calendar-plus"
+                    style="color: var(--text-muted); font-size: 16px"
+                  ></i>
+                  <div class="item-details">
+                    <h4 style="font-size: 13px"></h4>
+                    <p style="font-size: 11px"></p>
+                  </div>
+                </div>
+                <span class="badge-pending"></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VIEW 2: APPOINTMENTS ==================== -->
+        <section id="appointments-view" class="hidden">
+          <div class="view-title-bar">
+            <div class="title-area">
+              <div class="title-icon">
+                <i class="fa-regular fa-calendar-check"></i>
+              </div>
+              <div class="title-text">
+                <h2>Appointments</h2>
+                <p>
+                  Manage incoming bookings — confirm, complete, or cancel as
+                  your day unfolds.
+                </p>
+              </div>
+            </div>
+            <button class="btn-outline">
+              <i class="fa-solid fa-rotate-right"></i> Refresh
+            </button>
+          </div>
+
+          <div class="table-container">
+            <div class="table-toolbar">
+              <div class="filter-tabs">
+                <button
+                  class="filter-tab active"
+                  onclick="filterBookings('all')"
+                >
+                  All <span id="filter-all-count">0</span>
+                </button>
+
+                <button class="filter-tab" onclick="filterBookings('pending')">
+                  Pending <span id="filter-pending-count">0</span>
+                </button>
+
+                <button
+                  class="filter-tab"
+                  onclick="filterBookings('confirmed')"
+                >
+                  Confirmed <span id="filter-confirmed-count">0</span>
+                </button>
+
+                <button
+                  class="filter-tab"
+                  onclick="filterBookings('completed')"
+                >
+                  Completed <span id="filter-completed-count">0</span>
+                </button>
+
+                <button
+                  class="filter-tab"
+                  onclick="filterBookings('cancelled')"
+                >
+                  Cancelled <span id="filter-cancelled-count">0</span>
+                </button>
+              </div>
+              <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                  id="appointment-search"
+                  type="text"
+                  placeholder="Search appointments..."
+                  oninput="searchBookings(this.value)"
+                />
+              </div>
+            </div>
+
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Service</th>
+                  <th>Date & Time</th>
+                  <th>Contact</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="appointments-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ==================== VIEW 3: SERVICES ==================== -->
+<section id="services-view" class="hidden">
+
+  <div class="view-title-bar">
+    <div class="title-area">
+      <div class="title-icon">
+        <i class="fa-solid fa-sliders"></i>
+      </div>
+
+      <div class="title-text">
+        <h2>Services</h2>
+        <p>
+          Manage the laundry services available to your customers.
+        </p>
+      </div>
+    </div>
+
+    <button class="btn-dark">
+      <i class="fa-solid fa-plus"></i>
+      Add service
+    </button>
+  </div>
+
+  <div class="table-container">
+
+    <div class="table-toolbar">
+      <div>
+        <strong>Laundry Services</strong>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody id="services-body">
+      </tbody>
+
+    </table>
+
+  </div>
+
+</section>
+      </main>
+    </div>
+
+    <!-- ==================== APPOINTMENT DETAILS MODAL ==================== -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+      <div class="modal-container" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div>
+            <h3>Appointment details</h3>
+            <p id="modal-subtitle"></p>
+          </div>
+          <button class="close-modal" onclick="closeModal(event)">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="modal-grid">
+          <div class="info-group">
+            <label>Customer</label>
+            <p id="modal-customer"></p>
+          </div>
+          <div class="info-group">
+            <label>Status</label>
+            <div>
+              <span id="modal-status"></span>
+            </div>
+          </div>
+          <div class="info-group">
+            <label>Service</label>
+            <p id="modal-service"></p>
+          </div>
+          <div class="info-group">
+            <label>Date</label>
+            <p id="modal-date"></p>
+          </div>
+          <div class="info-group">
+            <label>Time</label>
+            <p id="modal-time"></p>
+          </div>
+          <div class="info-group">
+            <label>Email</label>
+            <p id="modal-email"></p>
+          </div>
+          <div class="info-group">
+            <label>Phone</label>
+            <p id="modal-phone"></p>
+          </div>
+          <div class="info-group">
+            <label>Location</label>
+            <p id="modal-location"></p>
+          </div>
+        </div>
+
+        <div class="info-group" style="margin-bottom: 8px">
+          <label>Notes</label>
+        </div>
+        <div class="notes-box" id="modal-notes"></div>
+
+        <div class="modal-actions">
+          <button class="btn-outline" onclick="closeModal(event)">
+            <i class="fa-regular fa-circle-xmark"></i> Cancel
+          </button>
+          <button
+            class="btn-outline"
+            onclick="updateModalBookingStatus('completed')"
+          >
+            <i class="fa-regular fa-clock"></i> Mark complete
+          </button>
+          <button
+            class="btn-dark"
+            onclick="updateModalBookingStatus('confirmed')"
+          >
+            <i class="fa-regular fa-circle-check"></i> Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/admin-dashboard.js"></script>
+  </body>
+</html>

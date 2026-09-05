@@ -668,7 +668,7 @@
 ======================================== */
 .services-section {
   padding: 40px 40px;
-  background: #ffffff;
+  background: #9b7070;
 
   scroll-margin-top: 80px;
 }
@@ -684,7 +684,7 @@
 
 .services-section {
   width: 100%;
-  background: #ffffff;
+  background: #d8f2f3;
   padding: 35px 35px 20px;
 }
 
@@ -716,7 +716,7 @@
   text-align: center;
 
   box-shadow:
-    0 3px 12px rgba(13, 65, 105, 0.08),
+    0 3px 12px rgba(13, 65, 105, 0.219),
     0 0 22px rgba(111, 218, 208, 0.08);
 
   transition:
