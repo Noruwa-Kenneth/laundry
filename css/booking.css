@@ -913,3 +913,260 @@ textarea:focus {
   font-size: 24px;
   letter-spacing: 1px;
 }
+
+/* ================================
+   BOOKING MOBILE RESPONSIVE
+================================ */
+
+@media screen and (max-width: 768px) {
+
+  /* Booking heading */
+  .booking-heading {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 0 16px;
+  }
+
+  .booking-heading h1 {
+    font-size: 36px;
+  }
+
+  .booking-heading p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+
+  /* Main booking layout */
+  .booking-container {
+    padding: 12px;
+  }
+
+  .booking-wrapper {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+
+  /* Stepper */
+  .stepper {
+    padding: 0;
+    margin-bottom: 16px;
+  }
+
+  .step-item {
+    gap: 5px;
+    font-size: 11px;
+  }
+
+  .step-number {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+
+  .step-divider {
+    margin: 0 6px;
+  }
+
+
+  /* Main card */
+  .card-container {
+    padding: 20px 16px;
+    border-radius: 12px;
+  }
+
+
+  /* Services */
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .service-card {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .service-img {
+    width: 85px;
+    height: 70px;
+  }
+
+  .service-title {
+    font-size: 14px;
+  }
+
+  .service-price {
+    font-size: 14px;
+  }
+
+  .service-desc {
+    font-size: 12px;
+  }
+
+
+  /* Date and time */
+  .datetime-container {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .calendar-box,
+  .times-box {
+    padding: 14px;
+  }
+
+  .calendar-grid {
+    gap: 4px;
+  }
+
+  .date-cell {
+    padding: 8px 0;
+  }
+
+  .times-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-height: none;
+  }
+
+  .time-slot {
+    padding: 10px 6px;
+    font-size: 12px;
+  }
+
+
+  /* Form */
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  input,
+  textarea {
+    font-size: 16px;
+  }
+
+
+  /* Buttons */
+  .action-row {
+    gap: 10px;
+  }
+
+  .btn {
+    padding: 11px 16px;
+    font-size: 13px;
+  }
+
+
+  /* Sidebar */
+  .sidebar {
+    width: 100%;
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .sidebar-title {
+    font-size: 17px;
+  }
+
+  .sidebar-details {
+    gap: 10px;
+  }
+
+
+  /* Confirmation */
+  .confirmation-box {
+    padding: 10px 0;
+  }
+
+  .summary-card {
+    padding: 14px;
+    font-size: 13px;
+  }
+
+  .summary-row {
+    gap: 12px;
+  }
+
+  .summary-row span:last-child {
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+
+  /* Email confirmation */
+  .email-confirmation-card {
+    padding: 12px;
+  }
+
+
+  /* Booking limit modal */
+  .booking-limit-modal {
+    padding: 16px;
+  }
+
+  .booking-limit-card {
+    padding: 32px 20px 24px;
+    max-width: 100%;
+  }
+
+  .booking-limit-card h2 {
+    font-size: 20px;
+  }
+
+  .booking-limit-card p {
+    font-size: 13px;
+  }
+
+  .booking-countdown strong {
+    font-size: 22px;
+  }
+}
+
+
+/* Very small phones */
+@media screen and (max-width: 400px) {
+
+  .booking-heading h1 {
+    font-size: 30px;
+  }
+
+  .booking-heading p {
+    font-size: 14px;
+  }
+
+  .card-container {
+    padding: 16px 12px;
+  }
+
+  .step-item {
+    font-size: 10px;
+  }
+
+  .step-divider {
+    margin: 0 3px;
+  }
+
+  .service-img {
+    width: 75px;
+    height: 65px;
+  }
+
+  .service-card {
+    gap: 10px;
+  }
+
+  .times-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .action-row {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .action-row .btn {
+    width: 100%;
+  }
+}
