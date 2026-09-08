@@ -63,14 +63,18 @@ const timeSlots = [
 ];
 
 let calendarDate = new Date();
-
+let bookingSettings = null;
+let blockedDatesCache = [];
+let businessHoursCache = [];
+let todayBookingCount = 0;
+let bookingCountdownInterval = null;
 // Store the current month as the earliest month customers can view
 const minimumCalendarDate = new Date();
 minimumCalendarDate.setDate(1);
 minimumCalendarDate.setHours(0, 0, 0, 0);
-// Latest date customers can book (60 days ahead)
-const maximumBookingDate = new Date();
-maximumBookingDate.setDate(maximumBookingDate.getDate() + 60);
+
+// Latest date customers can book
+let maximumBookingDate = new Date();
 maximumBookingDate.setHours(23, 59, 59, 999);
 
 const bookingState = {
@@ -86,16 +90,248 @@ const bookingState = {
 
 // Application Setup
 
-function init() {
+async function init() {
   renderServices();
+  await loadCalendarData();
+
+  updateBookingAvailability();
+
+  if (!checkBookingAvailability()) {
+    return;
+  }
+
+  await renderCalendar();
   renderTimes();
-  renderCalendar();
 }
 
-function renderCalendar() {
+async function loadCalendarData() {
+  const [
+    blockedDatesResult,
+    businessHoursResult,
+    settingsResult,
+    bookingsResult,
+  ] = await Promise.all([
+    supabaseClient.from("blocked_dates").select("blocked_date"),
+
+    supabaseClient
+      .from("business_hours")
+      .select("day_of_week, is_open, opening_time, closing_time"),
+
+    supabaseClient
+      .from("booking_settings")
+      .select("daily_booking_limit, max_booking_days")
+      .limit(1)
+      .maybeSingle(),
+
+    (() => {
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+
+      const startOfTomorrow = new Date(startOfToday);
+      startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+
+      return supabaseClient
+        .from("bookings")
+        .select("id, created_at, status")
+        .gte("created_at", startOfToday.toISOString())
+        .lt("created_at", startOfTomorrow.toISOString())
+        .neq("status", "cancelled");
+    })(),
+  ]);
+
+  if (blockedDatesResult.error) {
+    console.error("Error loading blocked dates:", blockedDatesResult.error);
+    return false;
+  }
+
+  if (businessHoursResult.error) {
+    console.error("Error loading business hours:", businessHoursResult.error);
+    return false;
+  }
+
+  if (settingsResult.error) {
+    console.error("Error loading booking settings:", settingsResult.error);
+    return false;
+  }
+
+  if (bookingsResult.error) {
+    console.error("Error loading today's bookings:", bookingsResult.error);
+    return false;
+  }
+
+  blockedDatesCache = blockedDatesResult.data || [];
+  businessHoursCache = businessHoursResult.data || [];
+  bookingSettings = settingsResult.data;
+  todayBookingCount = bookingsResult.data.length;
+
+  maximumBookingDate = new Date();
+  maximumBookingDate.setDate(
+    maximumBookingDate.getDate() + bookingSettings.max_booking_days,
+  );
+  maximumBookingDate.setHours(23, 59, 59, 999);
+
+  return true;
+}
+
+function updateBookingAvailability() {
+  const availabilityElement = document.getElementById("booking-availability");
+
+  if (!availabilityElement || !bookingSettings) {
+    return;
+  }
+
+  const dailyLimit = bookingSettings.daily_booking_limit;
+
+  const remainingBookings = Math.max(0, dailyLimit - todayBookingCount);
+
+  if (remainingBookings === 0) {
+    availabilityElement.textContent = "No bookings remaining today.";
+    return;
+  }
+
+  availabilityElement.textContent = `${remainingBookings} booking${
+    remainingBookings === 1 ? "" : "s"
+  } remaining today.`;
+}
+
+function openBookingLimitModal() {
+  const modal = document.getElementById("booking-limit-modal");
+
+  if (!modal) {
+    return;
+  }
+
+  modal.classList.add("active");
+
+  startBookingCountdown();
+}
+
+function closeBookingLimitModal() {
+  const modal = document.getElementById("booking-limit-modal");
+
+  if (!modal) {
+    return;
+  }
+
+  modal.classList.remove("active");
+
+  if (bookingCountdownInterval) {
+    clearInterval(bookingCountdownInterval);
+    bookingCountdownInterval = null;
+  }
+}
+
+function startBookingCountdown() {
+  const countdownElement = document.getElementById("booking-countdown");
+
+  if (!countdownElement) {
+    return;
+  }
+
+  // Stop any previous countdown
+  if (bookingCountdownInterval) {
+    clearInterval(bookingCountdownInterval);
+  }
+
+  async function updateCountdown() {
+    const now = new Date();
+
+    const midnight = new Date(now);
+    midnight.setDate(midnight.getDate() + 1);
+    midnight.setHours(0, 0, 0, 0);
+
+    const remaining = midnight - now;
+
+    if (remaining <= 0) {
+      countdownElement.textContent = "00:00:00";
+
+      clearInterval(bookingCountdownInterval);
+      bookingCountdownInterval = null;
+
+      // Reload today's booking count
+      await refreshBookingAvailability();
+
+      return;
+    }
+
+    const totalSeconds = Math.floor(remaining / 1000);
+
+    const hours = Math.floor(totalSeconds / 3600);
+
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+    const seconds = totalSeconds % 60;
+
+    countdownElement.textContent =
+      `${String(hours).padStart(2, "0")}:` +
+      `${String(minutes).padStart(2, "0")}:` +
+      `${String(seconds).padStart(2, "0")}`;
+  }
+
+  updateCountdown();
+
+  bookingCountdownInterval = setInterval(updateCountdown, 1000);
+}
+
+async function refreshBookingAvailability() {
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const startOfTomorrow = new Date(startOfToday);
+  startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+
+  const { data, error } = await supabaseClient
+    .from("bookings")
+    .select("id, created_at, status")
+    .gte("created_at", startOfToday.toISOString())
+    .lt("created_at", startOfTomorrow.toISOString())
+    .neq("status", "cancelled");
+
+  if (error) {
+    console.error("Error refreshing booking availability:", error);
+    return;
+  }
+
+  todayBookingCount = data.length;
+
+  updateBookingAvailability();
+
+  // If the new day has available capacity,
+  // close the limit modal.
+  if (
+    bookingSettings &&
+    todayBookingCount < bookingSettings.daily_booking_limit
+  ) {
+    closeBookingLimitModal();
+
+    await renderCalendar();
+  }
+}
+
+function checkBookingAvailability() {
+  if (!bookingSettings) {
+    return true;
+  }
+
+  const dailyLimit = bookingSettings.daily_booking_limit;
+
+  const remainingBookings = Math.max(0, dailyLimit - todayBookingCount);
+
+  if (remainingBookings <= 0) {
+    openBookingLimitModal();
+    return false;
+  }
+
+  return true;
+}
+
+async function renderCalendar() {
   const calendarGrid = document.getElementById("calendar-grid");
   const calendarMonth = document.getElementById("calendar-month");
 
+  // Use the data already loaded by loadCalendarData()
+  const blockedDates = blockedDatesCache;
+  const businessHours = businessHoursCache;
   const year = calendarDate.getFullYear();
   const month = calendarDate.getMonth();
 
@@ -107,12 +343,25 @@ function renderCalendar() {
 
   const previousMonthButton = document.getElementById("previous-month");
   const nextMonthButton = document.getElementById("next-month");
+
   const currentMonth = new Date(year, month, 1);
 
   if (currentMonth <= minimumCalendarDate) {
     previousMonthButton.disabled = true;
   } else {
     previousMonthButton.disabled = false;
+  }
+
+  const maximumMonth = new Date(
+    maximumBookingDate.getFullYear(),
+    maximumBookingDate.getMonth(),
+    1,
+  );
+
+  if (currentMonth >= maximumMonth) {
+    nextMonthButton.disabled = true;
+  } else {
+    nextMonthButton.disabled = false;
   }
 
   const firstDay = new Date(year, month, 1).getDay();
@@ -130,9 +379,14 @@ function renderCalendar() {
 
   for (let i = 0; i < firstDay; i++) {
     const emptyCell = document.createElement("div");
+
     emptyCell.className = "date-cell disabled";
+
     calendarGrid.appendChild(emptyCell);
   }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   for (let day = 1; day <= daysInMonth; day++) {
     const dateCell = document.createElement("div");
@@ -142,14 +396,38 @@ function renderCalendar() {
 
     const selectedDate = new Date(year, month, day);
 
-    // Remove the time portion so we compare dates only
     selectedDate.setHours(0, 0, 0, 0);
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const dateString =
+      selectedDate.getFullYear() +
+      "-" +
+      String(selectedDate.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(selectedDate.getDate()).padStart(2, "0");
 
-    if (selectedDate < today || selectedDate > maximumBookingDate) {
+    const isBlocked = blockedDates.some(function (blocked) {
+      return blocked.blocked_date === dateString;
+    });
+
+    const dayOfWeek = selectedDate.getDay();
+
+    const businessDay = businessHours.find(function (day) {
+      return day.day_of_week === dayOfWeek;
+    });
+
+    const isClosed = !businessDay || !businessDay.is_open;
+
+    if (
+      selectedDate < today ||
+      selectedDate > maximumBookingDate ||
+      isBlocked ||
+      isClosed
+    ) {
       dateCell.classList.add("disabled");
+
+      if (isBlocked) {
+        dateCell.title = "This date is unavailable";
+      }
     } else {
       dateCell.onclick = function () {
         selectDate(dateCell, selectedDate);
@@ -160,7 +438,7 @@ function renderCalendar() {
   }
 }
 
-function continueToStep3() {
+async function continueToStep3() {
   // Check if a date has been selected
   if (!bookingState.date) {
     alert("Please select a date first.");
@@ -173,10 +451,33 @@ function continueToStep3() {
     return;
   }
 
-  // Everything is selected, so continue
+  // Check the maximum booking date
+  if (bookingSettings) {
+    const maxBookingDays = bookingSettings.max_booking_days;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const maximumAllowedDate = new Date(today);
+    maximumAllowedDate.setDate(maximumAllowedDate.getDate() + maxBookingDays);
+    maximumAllowedDate.setHours(23, 59, 59, 999);
+
+    if (bookingState.date > maximumAllowedDate) {
+      alert(
+        `Sorry, bookings can only be made up to ${maxBookingDays} days ahead.`,
+      );
+      return;
+    }
+  }
+
+  // Check today's booking capacity
+  if (!checkBookingAvailability()) {
+    return;
+  }
+
+  // Everything is available, so continue
   goToStep(3);
 }
-
 
 function continueToStep4() {
   // Get the values from the form
@@ -191,9 +492,21 @@ function continueToStep4() {
     return;
   }
 
+  if (name.length < 2) {
+    alert("Please enter a valid name.");
+    return;
+  }
+
   // Check the phone number
   if (!phone) {
     alert("Please enter your phone number.");
+    return;
+  }
+
+  const phonePattern = /^[0-9+\-\s()]{7,20}$/;
+
+  if (!phonePattern.test(phone)) {
+    alert("Please enter a valid phone number.");
     return;
   }
 
@@ -203,9 +516,21 @@ function continueToStep4() {
     return;
   }
 
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailPattern.test(email)) {
+    alert("Please enter a valid email address.");
+    return;
+  }
+
   // Check the location
   if (!location) {
     alert("Please enter your pickup location.");
+    return;
+  }
+
+  if (location.length < 5) {
+    alert("Please enter a more complete pickup location.");
     return;
   }
 
@@ -224,28 +549,59 @@ function continueToStep4() {
 }
 
 async function finalConfirmBooking() {
-  const { error } = await supabaseClient
-    .from("bookings")
-    .insert({
-      customer_name: bookingState.name,
-      customer_email: bookingState.email,
-      customer_phone: bookingState.phone,
-      location: bookingState.location,
-      service: bookingState.service.name,
-      booking_date: bookingState.date
-        .toISOString()
-        .split("T")[0],
-      booking_time: bookingState.time,
-      notes: bookingState.notes || null,
-      status: "pending",
-    });
+  const slotBooked = await isTimeSlotBooked(
+    bookingState.date,
+    bookingState.time,
+  );
 
-  if (error) {
-    console.error("Booking error:", error);
-    alert("Sorry, we could not save your booking. Please try again.");
+  if (slotBooked) {
+    alert(
+      "Sorry, this time slot has just been booked by another customer. Please select another time.",
+    );
+
+    await renderTimes();
+
     return;
   }
 
+  const bookingDate =
+    bookingState.date.getFullYear() +
+    "-" +
+    String(bookingState.date.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(bookingState.date.getDate()).padStart(2, "0");
+
+  const { data, error } = await supabaseClient.rpc("create_booking", {
+    p_customer_name: bookingState.name,
+    p_customer_email: bookingState.email,
+    p_customer_phone: bookingState.phone,
+    p_location: bookingState.location,
+    p_service: bookingState.service.name,
+    p_booking_date: bookingDate,
+    p_booking_time: bookingState.time,
+    p_notes: bookingState.notes || null,
+  });
+
+  if (error) {
+    console.error("Booking error:", error);
+
+    if (error.message.includes("BOOKING_LIMIT_REACHED")) {
+      todayBookingCount = bookingSettings.daily_booking_limit;
+
+      updateBookingAvailability();
+      openBookingLimitModal();
+
+      return;
+    }
+
+    alert("Sorry, we could not save your booking. Please try again.");
+
+    return;
+  }
+  // Update today's booking count
+  todayBookingCount++;
+
+  updateBookingAvailability();
   // Booking successfully saved
   const firstName = bookingState.name.split(" ")[0];
 
@@ -264,8 +620,6 @@ async function finalConfirmBooking() {
     <span class="checkmark">&#10003;</span>
   `;
 }
-
-
 
 function changeMonth(direction) {
   const newMonth = new Date(calendarDate);
@@ -305,6 +659,16 @@ function selectDate(dateCell, selectedDate) {
 
   bookingState.date = selectedDate;
 
+  // Update the selected date label
+  const selectedDateLabel = document.getElementById("selected-date-label");
+
+  selectedDateLabel.textContent = selectedDate.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+
+  renderTimes();
   updateSummary();
 }
 
@@ -332,15 +696,118 @@ function renderServices() {
     .join("");
 }
 
-function renderTimes() {
+async function renderTimes() {
   const container = document.getElementById("times-grid");
-  container.innerHTML = timeSlots
-    .map(
-      (t) => `
-    <div class="time-slot ${t === bookingState.time ? "selected" : ""}" onclick="selectTime(this, '${t}')">${t}</div>
-  `,
-    )
+
+  container.innerHTML = "";
+
+  if (!bookingState.date) {
+    return;
+  }
+
+  const dayOfWeek = bookingState.date.getDay();
+
+  const { data: businessHours, error } = await supabaseClient
+    .from("business_hours")
+    .select("day_of_week, is_open, opening_time, closing_time")
+    .eq("day_of_week", dayOfWeek)
+    .single();
+
+  if (error) {
+    console.error("Error loading business hours:", error);
+    return;
+  }
+
+  if (!businessHours || !businessHours.is_open) {
+    container.innerHTML = "<p>We are closed on this day.</p>";
+    return;
+  }
+
+  const [openingHour, openingMinute] = businessHours.opening_time
+    .split(":")
+    .map(Number);
+
+  const [closingHour, closingMinute] = businessHours.closing_time
+    .split(":")
+    .map(Number);
+
+  const startMinutes = openingHour * 60 + openingMinute;
+  const endMinutes = closingHour * 60 + closingMinute;
+
+  const availableTimes = [];
+
+  for (let minutes = startMinutes; minutes <= endMinutes; minutes += 30) {
+    const hour = Math.floor(minutes / 60);
+    const minute = minutes % 60;
+
+    const period = hour >= 12 ? "PM" : "AM";
+    const displayHour = hour % 12 || 12;
+    const displayMinute = String(minute).padStart(2, "0");
+
+    const time = `${displayHour}:${displayMinute} ${period}`;
+
+    availableTimes.push(time);
+    if (bookingState.time && !availableTimes.includes(bookingState.time)) {
+      bookingState.time = null;
+    }
+  }
+
+  // Show the available time slots immediately
+  const slotResults = availableTimes.map(function (time) {
+    return {
+      time: time,
+      booked: false,
+    };
+  });
+
+  const checkingMessage = document.createElement("p");
+  checkingMessage.textContent = "Checking availability...";
+  checkingMessage.className = "checking-availability";
+
+  container.appendChild(checkingMessage);
+
+  container.innerHTML = slotResults
+    .map(function (slot) {
+      return `
+      <div
+  class="time-slot ${slot.time === bookingState.time ? "selected" : ""}"
+  data-time="${slot.time}"
+  onclick="selectTime(this, '${slot.time}')">
+  ${slot.time}
+</div>
+    `;
+    })
     .join("");
+
+  // Check Supabase for already booked times in the background
+  const bookedTimes = await getBookedTimes(bookingState.date);
+  console.log("Booked times for selected date:", bookedTimes);
+  const checkingElement = container.querySelector(".checking-availability");
+
+  if (checkingElement) {
+    checkingElement.remove();
+  }
+
+  if (bookedTimes === null) {
+    return;
+  }
+
+  // Mark booked slots after they have been loaded
+  container.querySelectorAll(".time-slot").forEach(function (slotElement) {
+    const time = slotElement.getAttribute("data-time");
+
+if (bookedTimes.includes(time)) {
+      slotElement.classList.add("disabled");
+      slotElement.removeAttribute("onclick");
+
+      slotElement.innerHTML = `
+      ${time}
+      <span class="slot-status">Booked</span>
+    `;
+    }
+  });
+
+
 }
 
 function selectService(id) {
@@ -354,12 +821,64 @@ function selectService(id) {
 }
 
 function continueToStep2() {
+  if (!checkBookingAvailability()) {
+    return;
+  }
+
   if (!bookingState.service) {
     alert("Please select a service first.");
     return;
   }
 
   goToStep(2);
+}
+
+async function getBookedTimes(date) {
+  const selectedDate =
+    date.getFullYear() +
+    "-" +
+    String(date.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(date.getDate()).padStart(2, "0");
+
+  const { data, error } = await supabaseClient
+    .from("bookings")
+    .select("booking_time")
+    .eq("booking_date", selectedDate)
+    .neq("status", "cancelled");
+
+  if (error) {
+    console.error("Error loading booked times:", error);
+    return null;
+  }
+
+  return data.map(function (booking) {
+    return booking.booking_time;
+  });
+}
+
+async function isTimeSlotBooked(date, time) {
+  const selectedDate =
+    date.getFullYear() +
+    "-" +
+    String(date.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(date.getDate()).padStart(2, "0");
+
+  const { data, error } = await supabaseClient
+    .from("bookings")
+    .select("id")
+    .eq("booking_date", selectedDate)
+    .eq("booking_time", time)
+    .neq("status", "cancelled")
+    .limit(1);
+
+  if (error) {
+    console.error("Error checking time slot:", error);
+    return false;
+  }
+
+  return data.length > 0;
 }
 
 function selectTime(element, timeStr) {
@@ -432,6 +951,7 @@ function updateSummary() {
   }
 }
 
+document.getElementById("selected-date-label").textContent = "Select a date";
 
 function goToStep(step) {
   // Hide all step panels
@@ -449,29 +969,25 @@ function goToStep(step) {
   });
 
   // Mark previous steps as completed
-// Mark previous steps as completed
-// Mark previous steps as completed
-for (let i = 1; i < step; i++) {
-  const completedStep = document.getElementById(`step-nav-${i}`);
+  // Mark previous steps as completed
+  // Mark previous steps as completed
+  for (let i = 1; i < step; i++) {
+    const completedStep = document.getElementById(`step-nav-${i}`);
 
-  completedStep.classList.add("completed");
+    completedStep.classList.add("completed");
 
-  // Change the number to a check mark
-  completedStep.querySelector(".step-number").innerHTML = `
+    // Change the number to a check mark
+    completedStep.querySelector(".step-number").innerHTML = `
   <span class="checkmark">&#10003;</span>
 `;
 
-  // Highlight the divider after the completed step
-  document.getElementById(`div-${i}`).classList.add("completed");
-}
+    // Highlight the divider after the completed step
+    document.getElementById(`div-${i}`).classList.add("completed");
+  }
 
   // Mark the current step as active
-  document
-    .getElementById(`step-nav-${step}`)
-    .classList.add("active");
+  document.getElementById(`step-nav-${step}`).classList.add("active");
 }
-
-
 
 function resetForm() {
   // Reset all booking data
@@ -516,12 +1032,20 @@ function resetForm() {
   goToStep(1);
 
   // Reset Step 1 number
-  document.getElementById("step-nav-1").querySelector(".step-number").innerText = "1";
+  document
+    .getElementById("step-nav-1")
+    .querySelector(".step-number").innerText = "1";
 
   // Reset Steps 2–4 numbers
-  document.getElementById("step-nav-2").querySelector(".step-number").innerText = "2";
-  document.getElementById("step-nav-3").querySelector(".step-number").innerText = "3";
-  document.getElementById("step-nav-4").querySelector(".step-number").innerText = "4";
+  document
+    .getElementById("step-nav-2")
+    .querySelector(".step-number").innerText = "2";
+  document
+    .getElementById("step-nav-3")
+    .querySelector(".step-number").innerText = "3";
+  document
+    .getElementById("step-nav-4")
+    .querySelector(".step-number").innerText = "4";
 
   // Remove completed state from dividers
   document
@@ -530,6 +1054,17 @@ function resetForm() {
 
   // Update sidebar
   updateSummary();
+}
+function handleBookingButton(event) {
+  event.preventDefault();
+
+  if (!checkBookingAvailability()) {
+    return false;
+  }
+
+  window.location.href = "booking.html";
+
+  return false;
 }
 
 window.onload = init;

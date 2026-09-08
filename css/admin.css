@@ -117,3 +117,33 @@ body {
 .admin-login-btn:hover {
   opacity: 0.9;
 }
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 40px; /* Leave space for the eye icon */
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: black;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: color 0.15s ease;
+}
+
+.toggle-password-btn:hover {
+  color: var(--text-main, #1c1917);
+}

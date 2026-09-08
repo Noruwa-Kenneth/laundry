@@ -37,7 +37,13 @@
         <a href="faq.html#contact">Contact</a>
         <a href="admin.html">Admin</a>
         <!-- Call to Action -->
-        <a href="booking.html" class="pickup-btn">Book a Pickup</a>
+        <a
+  href="booking.html"
+  class="pickup-btn"
+  onclick="return handleBookingButton(event)"
+>
+  Book a Pickup
+</a>
       </div>
 
       <!-- Hamburger Icon -->
@@ -53,12 +59,17 @@
     </nav>
 
     <div class="booking-heading">
-      <h1>Book Your Laundry Service</h1>
-      <p>
-        Choose a service, select a convenient time, and provide your details to
-        get started.
-      </p>
-    </div>
+  <h1>Book Your Laundry Service</h1>
+
+  <p>
+    Choose a service, select a convenient time, and provide your details to
+    get started.
+  </p>
+
+  <div id="booking-availability" class="booking-availability">
+    Checking availability...
+  </div>
+</div>
 
     <div class="booking-container">
       <div class="booking-wrapper">
@@ -130,7 +141,11 @@
                       &lt;
                     </button>
                     <span id="calendar-month">September 2026</span>
-                    <button class="calendar-nav" onclick="changeMonth(1)">
+                    <button
+                      class="calendar-nav"
+                      id="next-month"
+                      onclick="changeMonth(1)"
+                    >
                       &gt;
                     </button>
                   </div>
@@ -153,7 +168,7 @@
                     "
                     id="selected-date-label"
                   >
-                    Monday, June 29
+                    Select a date
                   </div>
                   <div class="times-grid" id="times-grid"></div>
                 </div>
@@ -418,6 +433,49 @@
         </div>
       </div>
     </div>
+
+    <!-- Booking Limit Modal -->
+<div id="booking-limit-modal" class="booking-limit-modal">
+
+  <div class="booking-limit-card">
+
+    <button
+      type="button"
+      class="booking-limit-close"
+      onclick="closeBookingLimitModal()"
+      aria-label="Close"
+    >
+      &times;
+    </button>
+
+    <div class="booking-limit-icon">
+      <i class="fa-solid fa-calendar-xmark"></i>
+    </div>
+
+    <h2>Sorry! Booking limit reached</h2>
+
+    <p>
+      We’ve reached our booking limit for today.
+      New bookings will be available again after midnight.
+      Please try again tomorrow.
+    </p>
+
+    <div class="booking-countdown">
+      <span>New bookings available in</span>
+      <strong id="booking-countdown">--:--:--</strong>
+    </div>
+
+    <button
+      type="button"
+      class="btn-dark"
+      onclick="closeBookingLimitModal()"
+    >
+      Close
+    </button>
+
+  </div>
+
+</div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
     <script src="js/booking.js"></script>

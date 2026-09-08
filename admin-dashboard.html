@@ -16,9 +16,9 @@
     <aside class="sidebar">
       <div>
         <div class="brand">
-          <div class="brand-icon"><i class="fa-solid fa-wrench"></i></div>
+          <div class="brand-icon"><i class="fa-solid fa-shirt"></i></div>
           <div class="brand-text">
-            <h1>HomeCraft</h1>
+            <h1>Kes Laundry</h1>
             <span>ADMIN CONSOLE</span>
           </div>
         </div>
@@ -32,10 +32,7 @@
             <i class="fa-regular fa-calendar-check"></i>
             Appointments
           </li>
-          <li class="nav-item" onclick="switchTab('services')">
-            <i class="fa-solid fa-sliders"></i>
-            Services
-          </li>
+
           <li class="nav-item" onclick="switchTab('business-hours')">
             <i class="fa-regular fa-clock"></i>
             Business Hours
@@ -60,7 +57,7 @@
         >
         <div class="user-info">
           <label>Signed in as</label>
-          <span>admin@homerepair.com</span>
+          <span>admin@keslaundry.com</span>
         </div>
       </div>
     </aside>
@@ -129,7 +126,7 @@
                 <label>Active Services</label>
                 <i class="fa-solid fa-wrench"></i>
               </div>
-              <div class="metric-value">6</div>
+              <div class="metric-value">5</div>
               <div class="metric-sub">Visible on public site</div>
             </div>
           </div>
@@ -147,10 +144,9 @@
                 >
               </div>
 
-              <div
-                class="appointment-item-card"
-                id="upcoming-appointments-list"
-              ></div>
+              <div id="upcoming-appointments-list" class="appointment-list">
+                <!-- Dynamic items will render here -->
+              </div>
             </div>
 
             <div class="panel">
@@ -161,18 +157,8 @@
                 </div>
               </div>
 
-              <div class="activity-item" id="recent-activity-list">
-                <div class="item-left">
-                  <i
-                    class="fa-regular fa-calendar-plus"
-                    style="color: var(--text-muted); font-size: 16px"
-                  ></i>
-                  <div class="item-details">
-                    <h4 style="font-size: 13px"></h4>
-                    <p style="font-size: 11px"></p>
-                  </div>
-                </div>
-                <span class="badge-pending"></span>
+              <div id="recent-activity-list" class="activity-list">
+                <!-- Dynamic items will render here -->
               </div>
             </div>
           </div>
@@ -252,6 +238,7 @@
                   <th>Date & Time</th>
                   <th>Contact</th>
                   <th>Status</th>
+                  <th>Booked On</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -260,55 +247,128 @@
           </div>
         </section>
 
-        <!-- ==================== VIEW 3: SERVICES ==================== -->
-<section id="services-view" class="hidden">
-
+        <!-- ==================== VIEW 3: BUSINESS HOURS ==================== -->
+        <section id="business-hours-view" class="hidden">
   <div class="view-title-bar">
     <div class="title-area">
       <div class="title-icon">
-        <i class="fa-solid fa-sliders"></i>
+        <i class="fa-regular fa-clock"></i>
       </div>
-
       <div class="title-text">
-        <h2>Services</h2>
-        <p>
-          Manage the laundry services available to your customers.
-        </p>
+        <h2>Business Hours</h2>
+        <p>Set your regular operating schedule for each day of the week.</p>
       </div>
     </div>
-
-    <button class="btn-dark">
-      <i class="fa-solid fa-plus"></i>
-      Add service
-    </button>
   </div>
 
-  <div class="table-container">
-
-    <div class="table-toolbar">
+  <div class="panel">
+    <div class="panel-header">
       <div>
-        <strong>Laundry Services</strong>
+        <h3>Weekly Schedule</h3>
+        <p>Clients can only book appointments during open hours.</p>
       </div>
     </div>
 
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Service</th>
-          <th>Description</th>
-          <th>Price</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
+    <div id="business-hours-list" class="business-hours-list">
+      <!-- Dynamic rows render here -->
+    </div>
+  </div>
+</section>
 
-      <tbody id="services-body">
-      </tbody>
+        <!-- ==================== VIEW: BLOCKED DATES ==================== -->
+        <section id="blocked-dates-view" class="hidden">
+          <div class="view-title-bar">
+            <div class="title-area">
+              <div class="title-icon">
+                <i class="fa-regular fa-calendar-xmark"></i>
+              </div>
 
-    </table>
+              <div class="title-text">
+                <h2>Blocked Dates</h2>
+                <p>Prevent customers from booking on specific dates.</p>
+              </div>
+            </div>
 
+            <button class="btn-dark" onclick="addBlockedDate()">
+              <i class="fa-solid fa-plus"></i>
+              Block a date
+            </button>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Unavailable Dates</h3>
+                <p>Dates when the laundry will not accept bookings.</p>
+              </div>
+            </div>
+
+            <div id="blocked-dates-list"></div>
+          </div>
+        </section>
+
+        <!-- ==================== VIEW: SETTINGS ==================== -->
+     <section id="settings-view" class="hidden">
+  <div class="view-title-bar">
+    <div class="title-area">
+      <div class="title-icon">
+        <i class="fa-solid fa-gear"></i>
+      </div>
+      <div class="title-text">
+        <p>Configure dashboard preferences and booking constraints.</p>
+      </div>
+    </div>
   </div>
 
+  <div class="panel settings-card">
+    <div class="panel-header">
+      <div>
+        <h3>Booking Settings</h3>
+        <p>Control how customers can make bookings.</p>
+      </div>
+    </div>
+
+    <div class="settings-form">
+      <div class="form-group">
+        <label for="setting-daily-limit">Daily Booking Limit</label>
+        <p class="form-help">
+          Maximum number of bookings that can be created per day.
+        </p>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-hashtag input-icon"></i>
+          <input
+            type="number"
+            id="setting-daily-limit"
+            min="1"
+            placeholder="5"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="setting-max-days">Maximum Booking Days Ahead</label>
+        <p class="form-help">
+          How far into the future customers can book (in days).
+        </p>
+        <div class="input-wrapper">
+          <i class="fa-regular fa-calendar-days input-icon"></i>
+          <input
+            type="number"
+            id="setting-max-days"
+            min="1"
+            placeholder="60"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-actions">
+      <button class="btn-dark" onclick="saveBookingSettings()">
+        <i class="fa-regular fa-floppy-disk"></i>
+        Save Booking Settings
+      </button>
+    </div>
+  </div>
 </section>
       </main>
     </div>
@@ -349,6 +409,10 @@
             <label>Time</label>
             <p id="modal-time"></p>
           </div>
+          <div>
+            <span>Booked On</span>
+            <div id="modal-booked-on"></div>
+          </div>
           <div class="info-group">
             <label>Email</label>
             <p id="modal-email"></p>
@@ -370,15 +434,19 @@
 
         <div class="modal-actions">
           <button class="btn-outline" onclick="closeModal(event)">
-            <i class="fa-regular fa-circle-xmark"></i> Cancel
+            <i class="fa-regular fa-circle-xmark"></i> Close
           </button>
+
           <button
+            id="modal-complete-btn"
             class="btn-outline"
             onclick="updateModalBookingStatus('completed')"
           >
             <i class="fa-regular fa-clock"></i> Mark complete
           </button>
+
           <button
+            id="modal-confirm-btn"
             class="btn-dark"
             onclick="updateModalBookingStatus('confirmed')"
           >
