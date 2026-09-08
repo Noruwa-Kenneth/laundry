@@ -1,47 +1,27 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const faqQuestions = document.querySelectorAll(".faq-question");
 
-const faqQuestions = document.querySelectorAll(".faq-question");
+  faqQuestions.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      // Target only the parent .faq-item of the clicked button
+      const currentItem = e.currentTarget.closest(".faq-item");
+      const currentAnswer = currentItem.querySelector(".faq-answer");
+      const isActive = currentItem.classList.contains("active");
 
-faqQuestions.forEach(function (question) {
-
-  question.addEventListener("click", function () {
-
-    const faqItem = question.parentElement;
-
-    const answer = faqItem.querySelector(".faq-answer");
-
-    /*
-     Close all other FAQ items
-     */
-    document.querySelectorAll(".faq-item").forEach(function (item) {
-
-      if (item !== faqItem) {
-
+      // Close all FAQ items first
+      document.querySelectorAll(".faq-item").forEach((item) => {
         item.classList.remove("active");
+        const answer = item.querySelector(".faq-answer");
+        if (answer) {
+          answer.style.maxHeight = "0px";
+        }
+      });
 
-        item.querySelector(".faq-answer").style.maxHeight = null;
-
+      // If the clicked item wasn't active, expand ONLY this item
+      if (!isActive) {
+        currentItem.classList.add("active");
+        currentAnswer.style.maxHeight = currentAnswer.scrollHeight + "px";
       }
-
     });
-
-
-    /*
-      Open or close the clicked item
-     */
-
-    faqItem.classList.toggle("active");
-
-    if (faqItem.classList.contains("active")) {
-
-      answer.style.maxHeight = answer.scrollHeight + "px";
-
-    } else {
-
-      answer.style.maxHeight = null;
-
-    }
-
   });
-
 });
-
