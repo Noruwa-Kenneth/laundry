@@ -1,26 +1,39 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const faqQuestions = document.querySelectorAll(".faq-question");
+document.addEventListener("DOMContentLoaded", function () {
+  const faqItems = document.querySelectorAll(".faq-item");
 
-  faqQuestions.forEach((button) => {
-    button.addEventListener("click", (e) => {
-      // Target only the parent .faq-item of the clicked button
-      const currentItem = e.currentTarget.closest(".faq-item");
-      const currentAnswer = currentItem.querySelector(".faq-answer");
-      const isActive = currentItem.classList.contains("active");
+  faqItems.forEach(function (item) {
+    const question = item.querySelector(".faq-question");
+    const answer = item.querySelector(".faq-answer");
 
-      // Close all FAQ items first
-      document.querySelectorAll(".faq-item").forEach((item) => {
-        item.classList.remove("active");
-        const answer = item.querySelector(".faq-answer");
-        if (answer) {
-          answer.style.maxHeight = "0px";
+    question.addEventListener("click", function (e) {
+      e.preventDefault(); // Stop native toggle behavior
+      const isOpen = item.hasAttribute("open");
+
+      // Close all active items with smooth collapse
+      faqItems.forEach(function (faq) {
+        const faqAnswer = faq.querySelector(".faq-answer");
+        
+        if (faq.hasAttribute("open")) {
+          faq.classList.remove("active");
+          faqAnswer.style.maxHeight = "0px";
+
+          // Wait for CSS transition (350ms) before removing [open]
+          setTimeout(function () {
+            faq.removeAttribute("open");
+          }, 350);
         }
       });
 
-      // If the clicked item wasn't active, expand ONLY this item
-      if (!isActive) {
-        currentItem.classList.add("active");
-        currentAnswer.style.maxHeight = currentAnswer.scrollHeight + "px";
+      // Open clicked item if it was previously closed
+      if (!isOpen) {
+        item.setAttribute("open", "");
+        // Force reflow so transition starts from 0px
+        answer.style.maxHeight = "0px";
+        
+        requestAnimationFrame(function () {
+          item.classList.add("active");
+          answer.style.maxHeight = answer.scrollHeight + "px";
+        });
       }
     });
   });
