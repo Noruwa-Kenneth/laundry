@@ -85,6 +85,7 @@ const bookingState = {
   email: "",
   phone: "",
   location: "",
+  itemCount: "",
   notes: "",
 };
 
@@ -534,11 +535,21 @@ function continueToStep4() {
     return;
   }
 
+  const itemCount = Number(document.getElementById("input-item-count").value);
+
+  if (!itemCount || itemCount < 1) {
+    alert("Please enter the number of items.");
+    return;
+  }
+
   // Save the information
   bookingState.name = name;
   bookingState.phone = phone;
   bookingState.email = email;
   bookingState.location = location;
+  bookingState.itemCount = document
+    .getElementById("input-item-count")
+    .value.trim();
   bookingState.notes = document.getElementById("input-notes").value.trim();
 
   // Update the summary
@@ -579,6 +590,7 @@ async function finalConfirmBooking() {
     p_service: bookingState.service.name,
     p_booking_date: bookingDate,
     p_booking_time: bookingState.time,
+    p_item_count: Number(bookingState.itemCount),
     p_notes: bookingState.notes || null,
   });
 
@@ -796,7 +808,7 @@ async function renderTimes() {
   container.querySelectorAll(".time-slot").forEach(function (slotElement) {
     const time = slotElement.getAttribute("data-time");
 
-if (bookedTimes.includes(time)) {
+    if (bookedTimes.includes(time)) {
       slotElement.classList.add("disabled");
       slotElement.removeAttribute("onclick");
 
@@ -806,8 +818,6 @@ if (bookedTimes.includes(time)) {
     `;
     }
   });
-
-
 }
 
 function selectService(id) {
@@ -895,6 +905,9 @@ function updateSummary() {
   bookingState.email = document.getElementById("input-email").value;
   bookingState.phone = document.getElementById("input-phone").value;
   bookingState.location = document.getElementById("input-location").value;
+  bookingState.itemCount = document
+    .getElementById("input-item-count")
+    .value.trim();
   bookingState.notes = document.getElementById("input-notes").value;
   const s = bookingState.service;
 
@@ -924,8 +937,9 @@ function updateSummary() {
 
   document.getElementById("sb-phone").innerText = bookingState.phone || "—";
 
-  document.getElementById("sb-location").innerText =
-    bookingState.location || "—";
+  document.getElementById("sb-location").innerText = bookingState.location || "—";
+
+  document.getElementById("sb-item-count").innerText = bookingState.itemCount || "—";
 
   // Update Confirmation Screen
   if (s) {
@@ -948,6 +962,8 @@ function updateSummary() {
     document.getElementById("conf-phone").innerText = bookingState.phone;
 
     document.getElementById("conf-notes").innerText = bookingState.notes || "—";
+
+    document.getElementById("conf-item-count").innerText = bookingState.itemCount || "—";
   }
 }
 
